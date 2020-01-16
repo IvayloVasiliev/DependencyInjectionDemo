@@ -1,26 +1,35 @@
-﻿using DependencyInjection.Core.Contracts;
-using DependencyInjection.Models.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DependencyInjection.Core
+﻿namespace DependencyInjection.Core
 {
+    using DependencyInjection.Core.Contracts;
+    using DependencyInjection.Models.Contracts;
+    using SoftUniDI.Attributes;
+
     public class Engine : IEngine
     {
-        private readonly IWriter fileWriter;
-        private readonly IReader consoleReader;
+        //[Inject] //injection for fields doesnt work, needss fixing
+        private IReader reader;
 
-        public Engine(IWriter fileWriter, IReader consoleReader)
+        //[Inject]
+        //[Named("ConsoleWriter")]
+        private IWriter consoleWriter;
+
+        //[Inject]
+        //[Named("FileWriter")]
+        private IWriter fileWriter;
+
+        [Inject]
+        public Engine(IReader consoleReader, IWriter consoleWriter, [Named("FileWriter")] IWriter fileWriter)
         {
+            this.reader = consoleReader;
             this.fileWriter = fileWriter;
-            this.consoleReader = consoleReader;
+            this.consoleWriter = consoleWriter;
         }
 
         public void Run()
         {
-            string content = consoleReader.Read();
-            this.fileWriter.Write(content);
+            var readInput = this.reader.Read();
+            this.consoleWriter.Write(readInput);
+            this.fileWriter.Write(readInput);
         }
     }
 }

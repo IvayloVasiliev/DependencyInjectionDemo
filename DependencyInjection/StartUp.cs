@@ -1,9 +1,6 @@
 ﻿using DependencyInjection.Core;
-using DependencyInjection.Core.Contracts;
-using DependencyInjection.Models;
-using DependencyInjection.Models.Contracts;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+using SoftUniDI;
+using DependencyInjection.Modules;
 
 namespace DependencyInjection
 {
@@ -11,23 +8,9 @@ namespace DependencyInjection
     {
         static void Main(string[] args)
         {
-            IServiceProvider serviceProvider = ConfigureServices();
-            var engine = serviceProvider.GetService<IEngine>();
+            var injector = DependencyInjector.CreateInjector(new Module());
+            var engine = injector.Inject<Engine>();
             engine.Run();
-        }
-
-        private static IServiceProvider ConfigureServices()
-        {
-            IServiceCollection serviceCollection = new ServiceCollection();
-
-            serviceCollection.AddTransient<IEngine, Engine>();
-            serviceCollection.AddTransient<IWriter, ConsoleWriter>();
-            serviceCollection.AddTransient<IWriter, FileWriter>();
-            serviceCollection.AddTransient<IReader, ConsoleReader>();
-
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-
-            return serviceProvider;
         }
     }
 }
